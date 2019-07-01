@@ -1,9 +1,9 @@
 const _ = require("lodash");
 const UserModel = require("../models/User");
 const EventModel = require("../models/Event");
-// const { PubSub } = require("apollo-server");
+const { PubSub } = require("apollo-server");
 
-// const pubsub = new PubSub();
+const pubsub = new PubSub();
 
 const resolvers = {
   Query: {
@@ -11,6 +11,7 @@ const resolvers = {
       return UserModel.find().exec();
     }
   },
+
   Mutation: {
     addEvent: (
       parent,
@@ -18,7 +19,9 @@ const resolvers = {
       context,
       info
     ) => {
-      pubsub.publish(EVENT_ADDED, { eventAdded: args });
+      pubsub.publish("EVENT_ADDED", {
+        eventAdded: { event: { email, eventActivity, zircoins } }
+      });
       const eventModel = new EventModel({ email, eventActivity, zircoins });
       const newEvent = eventModel.save();
       if (!newEvent) {
@@ -26,12 +29,16 @@ const resolvers = {
       }
       return newEvent;
     }
-    // Subscription: {
-    //   eventAdded: {
-    //     // Additional event labels can be passed to asyncIterator creation
-    //     subscribe: () => pubsub.asyncIterator([EVENT_ADDED])
-    //   }
-    // }
+  },
+  Subscription: {
+    eventAdded: {
+      // Additional event labels can be passed to asyncIterator creation
+      subscribe: () => pubsub.asyncIterator(["EVENT_ADDED"]),
+      resolve: payload => {
+        // TODO make resolver
+        return payload;
+      }
+    }
   }
 };
 

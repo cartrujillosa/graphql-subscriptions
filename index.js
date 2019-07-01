@@ -1,30 +1,36 @@
 import mongoose from "mongoose";
 import express from "express";
-import { graphqlExpress, graphiqlExpress } from "graphql-server-express";
-import bodyParser from "body-parser";
+import { ApolloServer } from "apollo-server-express";
 
-import schema from "./src/schema";
+import typeDefs from "./src/schema";
+import resolvers from "./src/resolvers";
+import http from "http";
 
-const PORT = 1234;
-const server = express();
+const PORT = 3031;
+const app = express();
 
-server.use(
-  "/graphql",
-  bodyParser.json(),
-  graphqlExpress({
-    schema
-  })
-);
+const server = new ApolloServer({
+  typeDefs,
+  resolvers
+});
 
-server.use(
-  "/graphiql",
-  graphiqlExpress({
-    endpointURL: "/graphql"
-  })
-);
+server.applyMiddleware({
+  app
+});
 
-server.listen(PORT);
-console.log("GraphQL API Server up and running at localhost:" + PORT);
+const httpServer = http.createServer(app);
+server.installSubscriptionHandlers(httpServer);
+
+httpServer.listen(PORT, () => {
+  console.log(
+    `🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`
+  );
+  console.log(
+    `🚀 Subscriptions ready at ws://localhost:${PORT}${
+      server.subscriptionsPath
+    }`
+  );
+});
 
 mongoose
   .connect("mongodb://localhost/node-graphql", {
