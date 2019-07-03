@@ -34,9 +34,19 @@ const resolvers = {
     eventAdded: {
       // Additional event labels can be passed to asyncIterator creation
       subscribe: () => pubsub.asyncIterator(["EVENT_ADDED"]),
-      resolve: payload => {
-        // TODO make resolver
-        return payload;
+      resolve: ({
+        eventAdded: {
+          event: { email, eventActivity, zircoins }
+        }
+      }) => {
+        var query = UserModel.where({ email: email });
+        query.findOne((err, user) => {
+          if (err) return handleError(err);
+          if (user == null) return null;
+          user.zircoins = user.zircoins + zircoins;
+          user.save();
+        });
+        return event;
       }
     }
   }
