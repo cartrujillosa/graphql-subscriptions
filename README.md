@@ -1,11 +1,12 @@
 # graphql-subscriptions
 
-Playing with subscriptoin with GraphQL
+Playing with subscriptions with GraphQL
 
 ## Installation
 
 ```bash
-git clone <repo>
+git clone git@github.com:cartrujillo/graphql-subscriptions.git
+cd graphql-subscriptions
 npm install
 npm start
 ```
