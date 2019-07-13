@@ -40,3 +40,13 @@ mutation
   }
 }
 ```
+4. Check changes:
+```
+{
+  users
+  {
+    email
+    zircoins
+   }
+}
+```
