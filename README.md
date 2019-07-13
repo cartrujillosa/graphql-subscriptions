@@ -24,7 +24,7 @@ subscription
   }
 }
 ```
-3. Add mutation link to subscription:
+3. Add mutation that launches subscription:
 ```
 mutation
 {
