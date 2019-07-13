@@ -7,6 +7,7 @@ import resolvers from "./src/resolvers";
 import http from "http";
 
 const PORT = 3031;
+const MONGO_URL = "mongodb://localhost/node-graphql";
 const app = express();
 
 const server = new ApolloServer({
@@ -23,19 +24,20 @@ server.installSubscriptionHandlers(httpServer);
 
 httpServer.listen(PORT, () => {
   console.log(
-    `🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`
+    `:: Server ready at http://localhost:${PORT}${server.graphqlPath} ::`
   );
   console.log(
-    `🚀 Subscriptions ready at ws://localhost:${PORT}${
+    `:: Subscriptions ready at ws://localhost:${PORT}${
       server.subscriptionsPath
-    }`
+    } ::`
   );
 });
 
 mongoose
-  .connect("mongodb://localhost/node-graphql", {
+  .connect(MONGO_URL, {
+    // TODO check connections succesful and database name
     promiseLibrary: require("bluebird"),
     useNewUrlParser: true
   })
-  .then(() => console.log("connection successful"))
+  .then(() => console.log(`:: Connection successful: ${MONGO_URL} ::`))
   .catch(err => console.error(err));

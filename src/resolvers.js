@@ -1,6 +1,6 @@
 const _ = require("lodash");
-const UserModel = require("../models/User");
-const EventModel = require("../models/Event");
+const userModel = require("../models/user");
+const eventModel = require("../models/event");
 const { PubSub } = require("apollo-server");
 
 const pubsub = new PubSub();
@@ -8,22 +8,22 @@ const pubsub = new PubSub();
 const resolvers = {
   Query: {
     users: (parent, args, context, info) => {
-      return UserModel.find().exec();
+      return userModel.find().exec();
     }
   },
 
   Mutation: {
     addEvent: (
       parent,
-      { event: { email, eventActivity, zircoins } }, // TODO: resolve [Object: null prototype] in first position
+      { event: { object, email, eventActivity, zircoins } }, // TODO: resolve [Object: null prototype] in first position
       context,
       info
     ) => {
       pubsub.publish("EVENT_ADDED", {
         eventAdded: { event: { email, eventActivity, zircoins } }
       });
-      const eventModel = new EventModel({ email, eventActivity, zircoins });
-      const newEvent = eventModel.save();
+      const event = new eventModel({ email, eventActivity, zircoins });
+      const newEvent = event.save();
       if (!newEvent) {
         throw new Error("Error creating event");
       }
@@ -39,14 +39,14 @@ const resolvers = {
           event: { email, eventActivity, zircoins }
         }
       }) => {
-        var query = UserModel.where({ email: email });
+        var query = userModel.where({ email: email });
         query.findOne((err, user) => {
           if (err) return handleError(err);
           if (user == null) return null;
           user.zircoins = user.zircoins + zircoins;
           user.save();
         });
-        return event;
+        return { email, eventActivity, zircoins };
       }
     }
   }
