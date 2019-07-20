@@ -11,6 +11,12 @@ npm install
 npm start
 ```
 
+## Authentication
+
+You can use the project `https://github.com/cartrujillo/graphql-auth` to get the token. Then put it on header:
+
+> {"Authorization": <token>}
+
 ## Usage
 
 1. Go to http://localhost:3031/graphql
