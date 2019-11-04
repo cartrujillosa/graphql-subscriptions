@@ -15,7 +15,7 @@
     "bluebird": "^3.5.5",
     "express": "^4.17.1",
     "graphql-tools": "^4.0.5",
-    "mongoose": "^5.6.1",
+    "mongoose": "^5.7.5",
     "graphql": "^14.4.0",
     "jsonwebtoken": "^8.4.0"
   },
